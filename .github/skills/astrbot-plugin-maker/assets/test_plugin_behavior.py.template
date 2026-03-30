@@ -1,0 +1,11 @@
+"""Behavior test template for AstrBot plugin logic.
+
+Replace symbols and expectations with real plugin behavior.
+"""
+
+
+def test_behavior_example() -> None:
+    """Template assertion to be replaced by real use case."""
+    user_input = "hello"
+    result = user_input.upper()
+    assert result == "HELLO"

@@ -1,0 +1,13 @@
+# Example local workflow
+# 1) Clone AstrBot
+git clone https://github.com/AstrBotDevs/AstrBot
+
+# 2) Enter plugin directory
+mkdir -p AstrBot/data/plugins
+cd AstrBot/data/plugins
+
+# 3) Clone your plugin repository
+git clone <your_plugin_repo_url>
+
+# Then open AstrBot in VS Code and debug from runtime.
+# Use WebUI plugin management to reload plugin after edits.

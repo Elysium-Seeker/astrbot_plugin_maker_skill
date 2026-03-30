@@ -1,0 +1,14 @@
+name: astrbot_plugin_example
+desc: Brief plugin description
+version: 0.1.0
+author: your_name
+
+# Optional human-friendly name in plugin markets/UI
+display_name: Example Plugin
+
+# Optional supported adapters
+support_platforms:
+  - telegram
+
+# Optional AstrBot version constraints (PEP 440, no 'v' prefix)
+astrbot_version: ">=4.17.0"

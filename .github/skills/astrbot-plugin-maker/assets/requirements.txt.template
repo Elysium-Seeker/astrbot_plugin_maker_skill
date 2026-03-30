@@ -1,0 +1,7 @@
+# Add third-party dependencies used by this plugin
+# httpx>=0.27.0
+# pydantic>=2.0.0
+
+# Test dependencies (recommended)
+# pytest>=8.0.0
+# pytest-asyncio>=0.23.0

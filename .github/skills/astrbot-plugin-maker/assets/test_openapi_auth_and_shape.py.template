@@ -1,0 +1,35 @@
+"""Template tests for AstrBot OpenAPI auth and response-shape handling.
+
+Replace `parse_api_response` and `ApiAuthError` with your real symbols.
+"""
+
+from typing import Any
+
+import pytest
+
+
+class ApiAuthError(Exception):
+    pass
+
+
+def parse_api_response(payload: dict[str, Any]) -> dict[str, Any]:
+    """Example parser placeholder. Replace with project implementation."""
+    status = payload.get("status")
+    if status != "ok":
+        raise ValueError("non-ok response")
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        raise ValueError("invalid data shape")
+    return data
+
+
+def test_parse_success_shape() -> None:
+    payload = {"status": "ok", "message": None, "data": {"bot_ids": ["x"]}}
+    data = parse_api_response(payload)
+    assert data["bot_ids"] == ["x"]
+
+
+@pytest.mark.parametrize("status_code", [401, 403])
+def test_auth_failures_are_handled(status_code: int) -> None:
+    with pytest.raises(ApiAuthError):
+        raise ApiAuthError(f"auth failed: {status_code}")

@@ -1,0 +1,19 @@
+"""Smoke tests for AstrBot plugin scaffold.
+
+Replace `your_plugin_module` with the real module path.
+"""
+
+import importlib
+
+
+def test_plugin_module_importable() -> None:
+    """Ensure plugin module can be imported without immediate runtime failure."""
+    module = importlib.import_module("your_plugin_module")
+    assert module is not None
+
+
+def test_plugin_has_metadata_file(tmp_path) -> None:
+    """Basic file-system oriented smoke check used in scaffold CI."""
+    metadata = tmp_path / "metadata.yaml"
+    metadata.write_text("name: demo\n", encoding="utf-8")
+    assert metadata.exists()
