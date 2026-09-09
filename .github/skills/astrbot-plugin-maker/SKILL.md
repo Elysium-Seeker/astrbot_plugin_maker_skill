@@ -78,9 +78,11 @@ Keep these framework constraints in the implementation:
    `PyYAML` and `packaging` in the development environment. This checks source syntax,
    metadata types/version constraints, and basic config shape without importing the
    plugin. It does **not** certify API compatibility or marketplace acceptance.
-3. Run Ruff on changed Python files. If the target runtime is available, run the
-   separate SDK smoke test and exercise load/reload and the requested command in a
-   local AstrBot instance. Use [testing](references/testing-guide.md) for commands.
+3. Run Ruff on changed Python files. If the target SDK is installed, run the separate
+   SDK smoke test. Exercise load/reload and the requested command when a selected
+   local instance is running or runtime integration testing is within the task's
+   scope. SDK availability alone does not call for starting a server. Use
+   [testing](references/testing-guide.md) for commands.
 4. Apply the relevant [delivery checks](references/compliance-checklist.md). Report
    changed files, usage/configuration, checks actually run, and any untested runtime
    or adapter behavior. Missing runtime access must not be reported as a passing

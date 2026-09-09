@@ -103,6 +103,8 @@ def validate_plugin(root: Path, require_repo: bool = False):
     if not metadata_path.exists():
         metadata_path = root / "metadata.yml"
     try:
+        if not metadata_path.is_file():
+            raise ValueError("metadata.yaml or metadata.yml is missing")
         metadata = yaml.load(
             metadata_path.read_text(encoding="utf-8-sig"), UniqueKeyLoader
         )

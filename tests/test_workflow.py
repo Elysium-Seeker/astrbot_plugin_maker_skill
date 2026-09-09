@@ -134,6 +134,14 @@ def test_missing_entrypoint_is_rejected(make_plugin):
     assert run_python(VALIDATOR, plugin).returncode != 0
 
 
+def test_missing_metadata_is_reported(make_plugin):
+    plugin = make_plugin()
+    (plugin / "metadata.yaml").unlink()
+    result = run_python(VALIDATOR, plugin)
+    assert result.returncode != 0
+    assert "metadata.yaml or metadata.yml is missing" in result.stdout
+
+
 @pytest.mark.parametrize("constraint", [">=v4.28.0", "4.28 or newer", ""])
 def test_invalid_compatibility_constraint(make_plugin, constraint):
     plugin = make_plugin()

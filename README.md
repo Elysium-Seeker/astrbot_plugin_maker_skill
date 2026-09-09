@@ -69,8 +69,9 @@ python -m ruff format --check .github/skills/astrbot-plugin-maker/scripts tests
 
 仓库测试覆盖普通/HTTP 两种脚手架、拒绝覆盖、中文与多行元数据、错误文件、
 配置和版本约束、资源链接，以及生成测试能否发现实际实现的回归。
-[CI](.github/workflows/validate.yml) 在 Windows/Linux 上运行这些检查，另用真实
-`astrbot==4.28.0` 检查插件注册、配置注入和消息结果。
+[CI](.github/workflows/validate.yml) 在 Windows/Linux 上运行这些检查，另用全新
+虚拟环境检查两种脚手架生成的依赖声明，并用真实 `astrbot==4.28.0` 检查插件和
+命令注册、配置注入和消息结果。
 
 静态检查不导入插件；离线行为测试不连接服务；真实 SDK 检查也不启动 WebUI
 或真实消息平台。插件加载、重载和目标适配器的实际行为需要在开发运行时验证，

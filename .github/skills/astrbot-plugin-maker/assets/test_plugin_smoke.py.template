@@ -18,7 +18,9 @@ from astrbot.api.event import AstrMessageEvent
 from astrbot.api.platform import AstrBotMessage, MessageMember, MessageType
 from astrbot.api.star import Star
 from astrbot.core.platform.platform_metadata import PlatformMetadata
+from astrbot.core.star.filter.command import CommandFilter
 from astrbot.core.star.star import star_map
+from astrbot.core.star.star_handler import star_handlers_registry
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 
@@ -33,9 +35,20 @@ def plugin_class():
         sys.path.remove(str(PLUGIN_ROOT.parent))
 
 
+def registered_command(plugin_class):
+    handler = star_handlers_registry.get_handler_by_full_name(
+        f"{plugin_class.__module__}_greet"
+    )
+    assert handler is not None
+    return next(
+        item for item in handler.event_filters if isinstance(item, CommandFilter)
+    )
+
+
 def test_real_sdk_registration(plugin_class):
     assert issubclass(plugin_class, Star)
     assert star_map[plugin_class.__module__].star_cls_type is plugin_class
+    assert registered_command(plugin_class).command_name == "{{command}}"
 
 
 def test_real_config_and_command_result(plugin_class, tmp_path):
@@ -50,14 +63,19 @@ def test_real_config_and_command_result(plugin_class, tmp_path):
     message.message = []
     message.message_str = "/{{command}}"
     event = AstrMessageEvent(
-        message.message_str,
+        "{{command}}",  # The framework strips the wake prefix before CommandFilter.
         message,
         PlatformMetadata(name="webchat", description="Offline test", id="test-bot"),
         "test-session",
     )
+    event.is_at_or_wake_command = True
+    assert registered_command(plugin_class).filter(event, config)
 
     async def collect():
-        return [result async for result in plugin.greet(event)]
+        return [
+            result
+            async for result in plugin.greet(event, **event.get_extra("parsed_params"))
+        ]
 
     result = asyncio.run(collect())
     assert len(result) == 1
