@@ -1,91 +1,92 @@
 ---
 name: astrbot-plugin-maker
-description: "Create AstrBot plugin scaffolds and compliant implementations from natural-language requirements based on official docs. Use when user asks to build, scaffold, implement, test, or publish an AstrBot plugin, including metadata.yaml, requirements.txt, compliance checks, and test generation."
-argument-hint: "Describe plugin requirement in natural language: features, triggers, adapters, and constraints"
+description: Create, repair, and test AstrBot Python plugins from requirements or an existing repository. Use for Star handlers, commands, plugin configuration, storage, LLM tools, metadata, and plugin HTTP integrations; also prepare plugin releases when requested.
 ---
 
 # AstrBot Plugin Maker
 
-## When to Use
-- User asks to create a new AstrBot plugin.
-- User asks for a plugin scaffold in an existing plugin folder.
-- User gives natural-language requirements and expects end-to-end compliant implementation.
-- User needs plugin features that call AstrBot HTTP API endpoints.
-- User asks for metadata.yaml fields, adapter support declaration, or AstrBot version constraints.
-- User asks for debug/reload workflow, dependency setup, or automated tests for plugin packaging.
+Turn the requested behavior into a working AstrBot plugin, or make a focused repair
+to an existing one. Preserve the user's chosen plugin, platform, version, and scope.
+An ordinary command plugin uses AstrBot's Python API; HTTP OpenAPI is optional.
 
-## Inputs To Collect
-1. Plugin repository/folder name (recommended prefix: astrbot_plugin_).
-2. Plugin purpose and main features.
-3. Target adapters (optional): aiocqhttp, qq_official, telegram, wecom, lark, dingtalk, discord, slack, kook, vocechat, weixin_official_account, satori, misskey, line.
-4. Minimal AstrBot version constraint (optional), e.g. >=4.17.0.
-5. Required third-party dependencies.
-6. Test preference: smoke tests only, or unit + smoke tests.
-7. Whether plugin must call AstrBot OpenAPI endpoints.
+## Establish the target
 
-## Procedure
-1. Confirm scope: create only plugin files or also setup local AstrBot runtime.
-2. Create or verify plugin directory naming:
-   - lowercase
-   - no spaces
-   - prefer astrbot_plugin_<name>
-3. Generate plugin metadata first, because AstrBot identifies plugin metadata through metadata.yaml.
-4. Add optional fields when user provides them:
-   - display_name
-   - support_platforms
-   - astrbot_version (PEP 440 style, no v prefix)
-5. Convert natural-language requirement into a concrete implementation plan:
-   - feature list
-   - event/command triggers
-   - input/output behavior
-   - error paths and fallback behavior
-6. Implement code and configuration files from that plan.
-7. If OpenAPI access is required, apply API integration baseline:
-   - base server default: http://localhost:6185
-   - endpoint family: /api/v1/*
-   - auth header: X-API-Key
-   - handle 401/403 explicitly with clear error messages
-8. Run compliance gate before finishing:
-   - only documented metadata keys
-   - supported adapter keys only
-   - persistent data must go to data directory
-   - avoid requests, prefer aiohttp/httpx
-9. Add requirements.txt when dependencies are used.
-10. Add tests:
-   - create test files from templates
-   - include at least one smoke test for import/basic wiring
-   - include behavior tests when logic is present
-   - if using OpenAPI, include auth-failure and response-shape tests
-11. Add logo.png guidance (optional, 1:1, recommended 256x256).
-12. Provide debug workflow:
-   - run AstrBot runtime
-   - use WebUI plugin management to reload plugin after code changes
-13. Apply development principles before finishing:
-   - tests and comments
-   - store persistent data under data directory (not plugin root)
-   - robust error handling
-   - async HTTP clients preferred (aiohttp/httpx), avoid requests
-   - format code with ruff before commit
+- Inspect the existing `main.py`, `metadata.yaml`, `_conf_schema.json`, dependencies,
+  tests, and repository instructions before changing an existing plugin.
+- Identify the trigger, expected reply or side effect, configuration, and supported
+  platform. Infer routine choices; ask only for missing information that changes the
+  behavior, compatibility, or publication destination. Do not require a questionnaire
+  or a separate plan approval for a clear implementation request.
+- Check the installed AstrBot version or the runtime checkout's `pyproject.toml`.
+  The bundled examples were checked against **v4.28.0, Python 3.12+**; this is a
+  verification baseline, not a minimum imposed on every plugin. For an older target,
+  verify the APIs there before choosing `astrbot_version`.
+- Use [sources](references/sources.md) to find the relevant official guide and pinned
+  implementation. Prefer the target runtime's source/signatures when examples differ.
+  If live sources are unavailable, use the recorded baseline and state that limit.
 
-## Required Outputs
-- metadata.yaml created and validated
-- requirements.txt created when needed
-- code implementation generated from natural-language requirement
-- test files created (at least smoke tests)
-- implementation checklist delivered to user
+## Implement the requested behavior
 
-## Use These Resources
-- Official checklist: [plugin-new-checklist](./references/plugin-new-checklist.md)
-- NL-to-implementation workflow: [nl-to-implementation](./references/nl-to-implementation.md)
-- Compliance checklist: [compliance-checklist](./references/compliance-checklist.md)
-- Testing guide: [testing-guide](./references/testing-guide.md)
-- OpenAPI integration guide: [openapi-integration](./references/openapi-integration.md)
-- Metadata template: [metadata.yaml.template](./assets/metadata.yaml.template)
-- Dependency template: [requirements.txt.template](./assets/requirements.txt.template)
-- Test template: [test_plugin_smoke.py.template](./assets/test_plugin_smoke.py.template)
-- Startup commands: [dev-commands](./assets/dev-commands.txt)
+For a new command plugin, use the small configurable greeting scaffold as a starting
+point, then replace its behavior and tests with the requested feature:
 
-## Constraints
-- Keep generated examples minimal and runnable.
-- Do not fabricate unsupported adapters or undocumented metadata keys.
-- If runtime API details are uncertain, point user to "minimal example" docs and mark TODOs clearly.
+```bash
+python <skill-dir>/scripts/scaffold_plugin.py <plugin-dir> --author "Author" --description "Plugin purpose" --command greet
+```
+
+`<plugin-dir>` must be a new `astrbot_plugin_<name>` directory. The script refuses to
+overwrite an existing path. It creates a real `main.py`, configuration, metadata,
+business logic, offline tests, and a separately invoked AstrBot runtime smoke test.
+It does not clone AstrBot, install dependencies, or publish anything.
+Use `--repo` for a known repository URL, `--astrbot-version` for a verified target,
+and `--with-openapi` only for a plugin that needs the optional HTTP client example.
+For an existing plugin, edit it directly; do not regenerate over it.
+
+Read only the references needed for the feature:
+
+| Need | Reference |
+| --- | --- |
+| Translate an open-ended request into concrete behavior | [Requirement mapping](references/nl-to-implementation.md) |
+| Metadata, supported platforms, dependencies, release preparation | [Plugin packaging](references/plugin-new-checklist.md) |
+| Commands, lifecycle, configuration, storage, messages, LLM calls/tools | [Python API patterns](references/api-patterns.md) |
+| External access to an AstrBot server | [HTTP API integration](references/openapi-integration.md) |
+| Offline tests, real SDK smoke tests, reload troubleshooting | [Testing guide](references/testing-guide.md) |
+
+Keep these framework constraints in the implementation:
+
+- Put the `Star` subclass in `main.py`; register handlers as methods with `self, event`.
+  Current AstrBot discovers subclasses automatically. Do not add the deprecated
+  `@register` to a new plugin; preserve old-version compatibility when repairing one.
+- Use AstrBot's config schema and the injected `AstrBotConfig`. Read the supplied
+  values, not hardcoded copies of defaults. Do not log config objects or credentials.
+- Store durable data under `data/plugin_data/<plugin_name>` or the plugin KV API.
+  Use the runtime's path helper, not the process's current directory.
+- Use async network clients with explicit timeouts. Create tasks/connections in
+  `initialize()` when needed and cancel/await/close them in `terminate()` so reloading
+  does not leave duplicate jobs or open sessions.
+- Use generic message components where possible. Check the selected adapter before
+  using platform-specific calls or claiming support for additional platforms.
+- Inspect a hook's contract before choosing `yield`, a return value, or
+  `await event.send(...)`; LLM lifecycle hooks cannot be treated as command generators.
+
+## Validate and deliver
+
+1. Run the existing relevant tests. For new logic, test actual production functions
+   and error paths; the supplied tests demonstrate this with the greeting module and
+   optional HTTP client. Never leave passing placeholder assertions in the deliverable.
+2. Run `python <skill-dir>/scripts/validate_plugin.py <plugin-dir>` after installing
+   `PyYAML` and `packaging` in the development environment. This checks source syntax,
+   metadata types/version constraints, and basic config shape without importing the
+   plugin. It does **not** certify API compatibility or marketplace acceptance.
+3. Run Ruff on changed Python files. If the target SDK is installed, run the separate
+   SDK smoke test. Exercise load/reload and the requested command when a selected
+   local instance is running or runtime integration testing is within the task's
+   scope. SDK availability alone does not call for starting a server. Use
+   [testing](references/testing-guide.md) for commands.
+4. Apply the relevant [delivery checks](references/compliance-checklist.md). Report
+   changed files, usage/configuration, checks actually run, and any untested runtime
+   or adapter behavior. Missing runtime access must not be reported as a passing
+   integration test.
+
+Prepare a release or PR when requested. Use the already authorized destination;
+plugin implementation alone does not imply publication to AstrBot Cloud.
