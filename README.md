@@ -5,6 +5,22 @@
 
 ## 使用 Skill
 
+在目标项目目录中运行以下命令，按提示选择编码 Agent：
+
+```bash
+npx skills add Elysium-Seeker/astrbot_plugin_maker_skill --skill astrbot-plugin-maker
+```
+
+例如，安装到当前项目供 GitHub Copilot 使用：
+
+```bash
+npx skills add Elysium-Seeker/astrbot_plugin_maker_skill --skill astrbot-plugin-maker --agent github-copilot --copy
+```
+
+这会安装完整的技能文件夹。命令默认使用项目范围；其他 Agent 可在交互选项中选择。
+安装方式见 [skills CLI 文档](https://skills.sh/docs/cli)。
+
+也可以手动安装：
 将完整的 `.github/skills/astrbot-plugin-maker/` 文件夹放进目标项目的
 `.github/skills/` 下，保留 `references/`、`assets/` 和 `scripts/`。
 在支持 Agent Skills 的 VS Code Copilot Chat 中输入 `/astrbot-plugin-maker`，
