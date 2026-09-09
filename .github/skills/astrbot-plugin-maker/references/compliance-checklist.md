@@ -1,40 +1,22 @@
-# Compliance Checklist For AstrBot Plugin Generation
+# Delivery checks
 
-## Metadata Compliance
-- `metadata.yaml` exists.
-- Required keys: `name`, `desc`, `version`, `author`.
-- Optional keys are valid and documented (`display_name`, `support_platforms`, `astrbot_version`).
-- `astrbot_version` follows PEP 440 and has no `v` prefix.
+Use the checks that apply to the change; this is a review aid, not an additional
+approval gate or a claim of official certification.
 
-## Adapter Compliance
-- `support_platforms` only contains supported keys:
-  - aiocqhttp
-  - qq_official
-  - telegram
-  - wecom
-  - lark
-  - dingtalk
-  - discord
-  - slack
-  - kook
-  - vocechat
-  - weixin_official_account
-  - satori
-  - misskey
-  - line
-
-## Code Compliance
-- No persistent data written in plugin source directory.
-- Persistent data paths use AstrBot `data` directory.
-- Network calls avoid `requests`; prefer async `aiohttp` or `httpx`.
-- Error handling prevents single-failure crash.
-
-## Test Compliance
-- At least one smoke test exists.
-- Behavior tests exist for non-trivial logic.
-- Tests are runnable with `pytest`.
-
-## Delivery Compliance
-- Include debug and reload instructions.
-- Include assumptions for ambiguous requirements.
-- Keep generated code minimal and runnable.
+- **Behavior:** the requested command/event/tool is implemented, and changed config
+  values reach it. Example greeting code is replaced when the requested feature differs.
+- **Framework:** entrypoint, decorators, hook signatures, and APIs match the selected
+  AstrBot release. Version constraints reflect that evidence.
+- **Packaging:** required metadata strings are present; author/repo values are real.
+  Runtime and development dependencies are separate. See [packaging](plugin-new-checklist.md).
+- **State/lifecycle:** durable files use AstrBot's plugin data directory; session
+  keys do not collide across bots. Owned tasks and clients are cleaned up on reload.
+- **Network:** async client, timeouts, relevant error paths, and no credential logging.
+  OpenAPI parsing uses the actual endpoint's JSON/SSE/binary contract.
+- **Tests:** assertions call the real implementation. Run existing relevant checks
+  and add regression coverage proportionate to the behavior change.
+- **Evidence:** distinguish static checks, offline behavior, actual SDK smoke tests,
+  and live loader/adapter checks. State unavailable checks explicitly.
+- **Release:** when requested, prepare the authorized PR or publication with a real
+  destination and current requirements. Do not infer marketplace approval from a
+  local validator.

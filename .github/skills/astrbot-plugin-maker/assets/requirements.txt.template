@@ -1,7 +1,3 @@
-# Add third-party dependencies used by this plugin
-# httpx>=0.27.0
-# pydantic>=2.0.0
-
-# Test dependencies (recommended)
-# pytest>=8.0.0
-# pytest-asyncio>=0.23.0
+# Runtime dependency for the optional openapi_client.py example.
+# Add dependencies actually imported by your implementation.
+httpx>=0.28,<1
