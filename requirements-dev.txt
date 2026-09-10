@@ -1,5 +1,5 @@
 pytest>=8,<10
 PyYAML>=6,<7
-packaging>=24
+packaging==26.3
 httpx>=0.28,<1
-ruff>=0.15
+ruff==0.16.6
